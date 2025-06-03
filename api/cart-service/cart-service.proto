@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package cart;
+
+option go_package = "./api/cart-service";
+
+message CartItem {
+    int32 product_id = 1;
+    int32 quantity = 2;
+}
+
+message AddCartRequest {
+    int32 user_id = 1;
+    CartItem item = 2;
+}
+
+message AddCartResponse {
+    bool success = 1;
+}
+
+message GetCartRequest {
+    int32 user_id = 1;
+}
+
+message GetCartResponse {
+    repeated CartItem items = 1;
+}
+
+service CartService {
+    rpc AddCart(AddCartRequest) returns (AddCartResponse);
+    rpc GetCart(GetCartRequest) returns (GetCartResponse);
+}
