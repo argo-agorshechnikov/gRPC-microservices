@@ -16,6 +16,6 @@ FROM alpine:latest
 
 COPY --from=builder /app/product_service /usr/local/bin/product_service
 
-EXPOSE 50051
+EXPOSE 50052
 
 ENTRYPOINT [ "/usr/local/bin/product_service" ]
