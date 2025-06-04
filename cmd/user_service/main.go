@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
+	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/repository"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 
 	"google.golang.org/grpc"
 )
@@ -14,6 +17,19 @@ type server struct {
 }
 
 func main() {
+	ctx := context.Background()
+
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("failed load config: %v", err)
+	}
+
+	repo, err := repository.NewPostgresRepository(ctx, cfg)
+	if err != nil {
+		log.Fatalf("failed connect db: %v", err)
+	}
+	defer repo.Pool.Close()
+
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
