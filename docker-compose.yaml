@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  user_service:
+    build:
+      context: .
+      dockerfile: docker/user-service.Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      - APP_DATABASE_HOST=db
+      - APP_DATABASE_PORT=5432
+      - APP_DATABASE_USER=argo
+      - APP_DATABASE_PASSWORD=argo
+      - APP_DATABASE_DBNAME=MS_db
+      - APP_DATABASE_SSLMODE=disable
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: argo
+      POSTGRES_PASSWORD: argo
+      POSTGRES_DB: MS_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -15,7 +15,11 @@ FROM alpine:latest
 COPY --from=builder /app/user_service /usr/local/bin/user_service
 COPY config.yaml /app/config.yaml
 
+COPY scripts/wait-db-connect.sh /app/wait-db-connect.sh
+RUN chmod +x /app/wait-db-connect.sh
+
 
 EXPOSE 50051
 
-ENTRYPOINT ["/usr/local/bin/user_service"]
+ENTRYPOINT ["/app/wait-db-connect.sh", "db", "5432"]
+CMD [ "/usr/local/bin/user_service" ]

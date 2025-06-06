@@ -24,14 +24,6 @@ func LoadConfig() (*Config, error) {
 	viper.AddConfigPath("/app")
 	viper.SetEnvPrefix("APP")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	viper.BindEnv("database.host")
-	viper.BindEnv("database.port")
-	viper.BindEnv("database.user")
-	viper.BindEnv("database.password")
-	viper.BindEnv("database.dbname")
-	viper.BindEnv("database.sslmode")
-
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
