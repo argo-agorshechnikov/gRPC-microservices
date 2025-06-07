@@ -19,6 +19,7 @@ type server struct {
 func main() {
 	ctx := context.Background()
 
+	// Load config at app starting
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("failed load config: %v", err)

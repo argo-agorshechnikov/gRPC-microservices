@@ -15,6 +15,7 @@ type PostgresRepository struct {
 
 func NewPostgresRepository(ctx context.Context, cfg *config.Config) (*PostgresRepository, error) {
 
+	// string connection
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Database.Host,
@@ -25,11 +26,13 @@ func NewPostgresRepository(ctx context.Context, cfg *config.Config) (*PostgresRe
 		cfg.Database.SSLMode,
 	)
 
+	// pool db connections
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed create pool: %w", err)
 	}
 
+	// Check db by ping
 	if err := pool.Ping(ctx); err != nil {
 		return nil, fmt.Errorf("failed ping db: %w", err)
 	}
