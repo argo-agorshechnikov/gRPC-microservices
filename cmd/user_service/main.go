@@ -25,11 +25,12 @@ func main() {
 		log.Fatalf("failed load config: %v", err)
 	}
 
+	// Create repository, use config
 	repo, err := repository.NewPostgresRepository(ctx, cfg)
 	if err != nil {
 		log.Fatalf("failed connect db: %v", err)
 	}
-	defer repo.Pool.Close()
+	defer repo.Pool.Close() // Close pool db connections
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
