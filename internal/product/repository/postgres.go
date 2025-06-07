@@ -9,13 +9,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresRepository struct {
+type PostgresRep struct {
 	Pool *pgxpool.Pool
 }
 
-func NewPostgresRepository(ctx context.Context, cfg *config.Config) (*PostgresRepository, error) {
+func NewPostgresRep(ctx context.Context, cfg *config.Config) (*PostgresRep, error) {
 
-	// string connection
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Database.Host,
@@ -26,18 +25,16 @@ func NewPostgresRepository(ctx context.Context, cfg *config.Config) (*PostgresRe
 		cfg.Database.SSLMode,
 	)
 
-	// pool db connections
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		return nil, fmt.Errorf("failed create pool in user service: %w", err)
+		return nil, fmt.Errorf("failed pool creating in product service: %w", err)
 	}
 
-	// Check db by ping
 	if err := pool.Ping(ctx); err != nil {
-		return nil, fmt.Errorf("failed ping db in user service: %w", err)
+		return nil, fmt.Errorf("failed ping db in product service: %w", err)
 	}
 
-	log.Println("Successfully connected to db user service")
+	log.Println("Successfully connected to db in product service")
 
-	return &PostgresRepository{Pool: pool}, nil
+	return &PostgresRep{Pool: pool}, nil
 }

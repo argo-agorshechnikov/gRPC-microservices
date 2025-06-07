@@ -22,23 +22,23 @@ func main() {
 	// Load config at app starting
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("failed load config: %v", err)
+		log.Fatalf("failed load config (user): %v", err)
 	}
 
 	// Create repository, use config
 	repo, err := repository.NewPostgresRepository(ctx, cfg)
 	if err != nil {
-		log.Fatalf("failed connect db: %v", err)
+		log.Fatalf("failed connect db (user): %v", err)
 	}
 	defer repo.Pool.Close() // Close pool db connections
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("failed to listen (user): %v", err)
 	}
 	s := grpc.NewServer()
 	userpb.RegisterUserServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatalf("failed to serve (user): %v", err)
 	}
 }
