@@ -9,11 +9,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresRep struct {
+type PostgresRepo struct {
 	Pool *pgxpool.Pool
 }
 
-func ProductRepository(ctx context.Context, cfg *config.Config) (*PostgresRep, error) {
+func CartRepository(ctx context.Context, cfg *config.Config) (*PostgresRepo, error) {
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -27,14 +27,14 @@ func ProductRepository(ctx context.Context, cfg *config.Config) (*PostgresRep, e
 
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		return nil, fmt.Errorf("failed pool creating in product service: %w", err)
+		return nil, fmt.Errorf("failed pool created in cart service: %w", err)
 	}
 
 	if err := pool.Ping(ctx); err != nil {
-		return nil, fmt.Errorf("failed ping db in product service: %w", err)
+		return nil, fmt.Errorf("failed ping db in cart service: %w", err)
 	}
 
-	log.Println("Successfully connected to db in product service")
+	log.Println("Successfully connected to db in cart service")
 
-	return &PostgresRep{Pool: pool}, nil
+	return &PostgresRepo{Pool: pool}, nil
 }

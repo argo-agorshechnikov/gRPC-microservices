@@ -13,7 +13,7 @@ type PostgresRepository struct {
 	Pool *pgxpool.Pool
 }
 
-func NewPostgresRepository(ctx context.Context, cfg *config.Config) (*PostgresRepository, error) {
+func UserRepository(ctx context.Context, cfg *config.Config) (*PostgresRepository, error) {
 
 	// string connection
 	dsn := fmt.Sprintf(

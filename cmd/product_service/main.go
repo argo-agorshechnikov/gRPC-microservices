@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("failed load config (product): %v", err)
 	}
 
-	repo, err := repository.NewPostgresRep(ctx, cfg)
+	repo, err := repository.ProductRepository(ctx, cfg)
 	if err != nil {
 		log.Fatalf("failed repo created (product): %v", err)
 	}
