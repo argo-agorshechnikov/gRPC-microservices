@@ -1,6 +1,18 @@
 version: "3.8"
 
 services:
+  migrate:
+    image: migrate/migrate
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://argo:argo@db:5432/MS_db?sslmode=disable",
+      "up"
+    ]
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      db:
+        condition: service_healthy
   user_service:
     build:
       context: .
@@ -15,19 +27,29 @@ services:
       - APP_DATABASE_DBNAME=MS_db
       - APP_DATABASE_SSLMODE=disable
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
 
   db:
     image: postgres:15
+    command: ["postgres", "-c", "password_encryption=md5"]
     restart: always
     environment:
       POSTGRES_USER: argo
       POSTGRES_PASSWORD: argo
       POSTGRES_DB: MS_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U argo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:

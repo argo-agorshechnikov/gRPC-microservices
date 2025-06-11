@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -20,9 +21,9 @@ type Config struct {
 func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config") // name of config.yaml
 	viper.SetConfigType("yaml")   // type
-	viper.AddConfigPath(".")      // location /APP for docker     . for local
-	// viper.SetEnvPrefix("APP")
-	// viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AddConfigPath("/app")   // location /app for docker     . for local
+	viper.SetEnvPrefix("APP")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
 	// Read config file

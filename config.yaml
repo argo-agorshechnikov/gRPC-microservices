@@ -1,5 +1,5 @@
 database:
-  host: localhost #192.168.0.170
+  host: db
   port: 5432
   user: argo
   password: argo
