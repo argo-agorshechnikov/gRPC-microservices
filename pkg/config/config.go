@@ -20,7 +20,7 @@ type Config struct {
 func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config") // name of config.yaml
 	viper.SetConfigType("yaml")   // type
-	viper.AddConfigPath(".")      // location
+	viper.AddConfigPath(".")      // location /APP for docker     . for local
 	// viper.SetEnvPrefix("APP")
 	// viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
