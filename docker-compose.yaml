@@ -50,7 +50,28 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
-    
+
+  product_service:
+    build:
+      context: .
+      dockerfile: docker/product-service.Dockerfile
+    ports:
+      - "50052:50052"
+    environment:
+      - APP_DATABASE_HOST=db
+      - APP_DATABASE_PORT=5432
+      - APP_DATABASE_USER=argo
+      - APP_DATABASE_PASSWORD=argo
+      - APP_DATABASE_DBNAME=MS_db
+      - APP_DATABASE_SSLMODE=disable
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+
+
   db:
     image: postgres:15
     command: ["postgres", "-c", "password_encryption=md5"]
