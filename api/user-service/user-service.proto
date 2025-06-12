@@ -8,6 +8,7 @@ message User {
     int32 id = 1;
     string name = 2;
     string email = 3;
+    string role = 4; // user / admin
 }
 
 message RegisterUserRequest {
@@ -20,16 +21,22 @@ message RegisterUserResponse {
     User user = 1;
 }
 
-message GetUserRequest {
-    int32 id = 1;
+message GetUserByEmailRequest {
+    string email = 1;
 }
 
-message GetUserResponse {
+message GetUserByEmailResponse {
     User user = 1;
+}
+
+message ListUsersRequest {}
+message ListUsersResponse {
+    repeated User users = 1;
 }
 
 service UserService {
     rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
-    rpc GetUser(GetUserRequest) returns(GetUserResponse);
+    rpc GetUserByEmail(GetUserByEmailRequest) returns(GetUserByEmailResponse);
+    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
 }
 
