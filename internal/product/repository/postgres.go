@@ -9,11 +9,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresRep struct {
+type ProductRepository struct {
 	Pool *pgxpool.Pool
 }
 
-func ProductRepository(ctx context.Context, cfg *config.Config) (*PostgresRep, error) {
+func CreateProductRepository(ctx context.Context, cfg *config.Config) (*ProductRepository, error) {
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -36,5 +36,5 @@ func ProductRepository(ctx context.Context, cfg *config.Config) (*PostgresRep, e
 
 	log.Println("Successfully connected to db in product service")
 
-	return &PostgresRep{Pool: pool}, nil
+	return &ProductRepository{Pool: pool}, nil
 }

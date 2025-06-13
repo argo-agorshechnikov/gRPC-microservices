@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("failed load config (cart): %v", err)
 	}
 
-	repo, err := repository.CartRepository(ctx, cfg)
+	repo, err := repository.CreateCartRepository(ctx, cfg)
 	if err != nil {
 		log.Fatalf("failed created repo (cart): %v", err)
 	}

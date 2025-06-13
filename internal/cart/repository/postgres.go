@@ -9,11 +9,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresRepo struct {
+type CartRepository struct {
 	Pool *pgxpool.Pool
 }
 
-func CartRepository(ctx context.Context, cfg *config.Config) (*PostgresRepo, error) {
+func CreateCartRepository(ctx context.Context, cfg *config.Config) (*CartRepository, error) {
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -36,5 +36,5 @@ func CartRepository(ctx context.Context, cfg *config.Config) (*PostgresRepo, err
 
 	log.Println("Successfully connected to db in cart service")
 
-	return &PostgresRepo{Pool: pool}, nil
+	return &CartRepository{Pool: pool}, nil
 }

@@ -7,14 +7,12 @@ import (
 
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/repository"
+	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
-
-type server struct {
-	userpb.UnimplementedUserServiceServer
-}
 
 func main() {
 	ctx := context.Background()
@@ -36,8 +34,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen (user): %v", err)
 	}
+
 	s := grpc.NewServer()
-	userpb.RegisterUserServiceServer(s, &server{})
+	userService := service.NewUserService(repo)
+
+	userpb.RegisterUserServiceServer(s, userService)
+	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve (user): %v", err)
 	}
