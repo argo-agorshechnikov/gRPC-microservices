@@ -29,14 +29,6 @@ message RegisterUserResponse {
     User user = 1;
 }
 
-message GetUserByEmailRequest {
-    string email = 1;
-}
-
-message GetUserByEmailResponse {
-    User user = 1;
-}
-
 message ListUsersRequest {}
 message ListUsersResponse {
     repeated User users = 1;
@@ -44,7 +36,6 @@ message ListUsersResponse {
 
 service UserService {
     rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
-    rpc GetUserByEmail(GetUserByEmailRequest) returns(GetUserByEmailResponse);
     rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
 }
 
