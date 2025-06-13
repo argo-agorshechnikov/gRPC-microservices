@@ -31,6 +31,12 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "50051"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 
   cart_service:
     build:
@@ -89,6 +95,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  grpcui:
+    image: fullstorydev/grpcui
+    ports:
+      - "8080:8080"
+    command: [
+      "-plaintext",
+      "user_service:50051"
+    ]
+
+    depends_on:
+      user_service:
+        condition: service_healthy
 
 volumes:
   pgdata:
