@@ -11,11 +11,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresRepository struct {
+type UserRepository struct {
 	Pool *pgxpool.Pool
 }
 
-func UserRepository(ctx context.Context, cfg *config.Config) (*PostgresRepository, error) {
+func CreateUserRepository(ctx context.Context, cfg *config.Config) (*UserRepository, error) {
 
 	// string connection
 	dsn := fmt.Sprintf(
@@ -41,5 +41,5 @@ func UserRepository(ctx context.Context, cfg *config.Config) (*PostgresRepositor
 
 	log.Println("Successfully connected to db user service")
 
-	return &PostgresRepository{Pool: pool}, nil
+	return &UserRepository{Pool: pool}, nil
 }

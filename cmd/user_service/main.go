@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Create repository, use config
-	repo, err := repository.UserRepository(ctx, cfg)
+	repo, err := repository.CreateUserRepository(ctx, cfg)
 	if err != nil {
 		log.Fatalf("failed connect db (user): %v", err)
 	}

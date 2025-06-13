@@ -9,6 +9,7 @@ package user_service
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,12 +22,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Role int32
+
+const (
+	Role_USER  Role = 0
+	Role_ADMIN Role = 1
+)
+
+// Enum value maps for Role.
+var (
+	Role_name = map[int32]string{
+		0: "USER",
+		1: "ADMIN",
+	}
+	Role_value = map[string]int32{
+		"USER":  0,
+		"ADMIN": 1,
+	}
+)
+
+func (x Role) Enum() *Role {
+	p := new(Role)
+	*p = x
+	return p
+}
+
+func (x Role) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Role) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_user_service_user_service_proto_enumTypes[0].Descriptor()
+}
+
+func (Role) Type() protoreflect.EnumType {
+	return &file_api_user_service_user_service_proto_enumTypes[0]
+}
+
+func (x Role) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Role.Descriptor instead.
+func (Role) EnumDescriptor() ([]byte, []int) {
+	return file_api_user_service_user_service_proto_rawDescGZIP(), []int{0}
+}
+
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Role          string                 `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"` // user / admin
+	Role          Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=user.Role" json:"role,omitempty"` // user / admin
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,11 +109,11 @@ func (*User) Descriptor() ([]byte, []int) {
 	return file_api_user_service_user_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *User) GetId() int32 {
+func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *User) GetName() string {
@@ -82,11 +130,18 @@ func (x *User) GetEmail() string {
 	return ""
 }
 
-func (x *User) GetRole() string {
+func (x *User) GetRole() Role {
 	if x != nil {
 		return x.Role
 	}
-	return ""
+	return Role_USER
+}
+
+func (x *User) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
 }
 
 type RegisterUserRequest struct {
@@ -365,12 +420,15 @@ var File_api_user_service_user_service_proto protoreflect.FileDescriptor
 
 const file_api_user_service_user_service_proto_rawDesc = "" +
 	"\n" +
-	"#api/user-service/user-service.proto\x12\x04user\"T\n" +
+	"#api/user-service/user-service.proto\x12\x04user\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9b\x01\n" +
 	"\x04User\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x12\n" +
-	"\x04role\x18\x04 \x01(\tR\x04role\"[\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1e\n" +
+	"\x04role\x18\x04 \x01(\x0e2\n" +
+	".user.RoleR\x04role\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"[\n" +
 	"\x13RegisterUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x12\n" +
@@ -386,7 +444,10 @@ const file_api_user_service_user_service_proto_rawDesc = "" +
 	"\x10ListUsersRequest\"5\n" +
 	"\x11ListUsersResponse\x12 \n" +
 	"\x05users\x18\x01 \x03(\v2\n" +
-	".user.UserR\x05users2\xdf\x01\n" +
+	".user.UserR\x05users*\x1b\n" +
+	"\x04Role\x12\b\n" +
+	"\x04USER\x10\x00\x12\t\n" +
+	"\x05ADMIN\x10\x012\xdf\x01\n" +
 	"\vUserService\x12E\n" +
 	"\fRegisterUser\x12\x19.user.RegisterUserRequest\x1a\x1a.user.RegisterUserResponse\x12K\n" +
 	"\x0eGetUserByEmail\x12\x1b.user.GetUserByEmailRequest\x1a\x1c.user.GetUserByEmailResponse\x12<\n" +
@@ -404,31 +465,36 @@ func file_api_user_service_user_service_proto_rawDescGZIP() []byte {
 	return file_api_user_service_user_service_proto_rawDescData
 }
 
+var file_api_user_service_user_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_api_user_service_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_api_user_service_user_service_proto_goTypes = []any{
-	(*User)(nil),                   // 0: user.User
-	(*RegisterUserRequest)(nil),    // 1: user.RegisterUserRequest
-	(*RegisterUserResponse)(nil),   // 2: user.RegisterUserResponse
-	(*GetUserByEmailRequest)(nil),  // 3: user.GetUserByEmailRequest
-	(*GetUserByEmailResponse)(nil), // 4: user.GetUserByEmailResponse
-	(*ListUsersRequest)(nil),       // 5: user.ListUsersRequest
-	(*ListUsersResponse)(nil),      // 6: user.ListUsersResponse
+	(Role)(0),                      // 0: user.Role
+	(*User)(nil),                   // 1: user.User
+	(*RegisterUserRequest)(nil),    // 2: user.RegisterUserRequest
+	(*RegisterUserResponse)(nil),   // 3: user.RegisterUserResponse
+	(*GetUserByEmailRequest)(nil),  // 4: user.GetUserByEmailRequest
+	(*GetUserByEmailResponse)(nil), // 5: user.GetUserByEmailResponse
+	(*ListUsersRequest)(nil),       // 6: user.ListUsersRequest
+	(*ListUsersResponse)(nil),      // 7: user.ListUsersResponse
+	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
 }
 var file_api_user_service_user_service_proto_depIdxs = []int32{
-	0, // 0: user.RegisterUserResponse.user:type_name -> user.User
-	0, // 1: user.GetUserByEmailResponse.user:type_name -> user.User
-	0, // 2: user.ListUsersResponse.users:type_name -> user.User
-	1, // 3: user.UserService.RegisterUser:input_type -> user.RegisterUserRequest
-	3, // 4: user.UserService.GetUserByEmail:input_type -> user.GetUserByEmailRequest
-	5, // 5: user.UserService.ListUsers:input_type -> user.ListUsersRequest
-	2, // 6: user.UserService.RegisterUser:output_type -> user.RegisterUserResponse
-	4, // 7: user.UserService.GetUserByEmail:output_type -> user.GetUserByEmailResponse
-	6, // 8: user.UserService.ListUsers:output_type -> user.ListUsersResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 0: user.User.role:type_name -> user.Role
+	8, // 1: user.User.created_at:type_name -> google.protobuf.Timestamp
+	1, // 2: user.RegisterUserResponse.user:type_name -> user.User
+	1, // 3: user.GetUserByEmailResponse.user:type_name -> user.User
+	1, // 4: user.ListUsersResponse.users:type_name -> user.User
+	2, // 5: user.UserService.RegisterUser:input_type -> user.RegisterUserRequest
+	4, // 6: user.UserService.GetUserByEmail:input_type -> user.GetUserByEmailRequest
+	6, // 7: user.UserService.ListUsers:input_type -> user.ListUsersRequest
+	3, // 8: user.UserService.RegisterUser:output_type -> user.RegisterUserResponse
+	5, // 9: user.UserService.GetUserByEmail:output_type -> user.GetUserByEmailResponse
+	7, // 10: user.UserService.ListUsers:output_type -> user.ListUsersResponse
+	8, // [8:11] is the sub-list for method output_type
+	5, // [5:8] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_user_service_user_service_proto_init() }
@@ -441,13 +507,14 @@ func file_api_user_service_user_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_user_service_user_service_proto_rawDesc), len(file_api_user_service_user_service_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_api_user_service_user_service_proto_goTypes,
 		DependencyIndexes: file_api_user_service_user_service_proto_depIdxs,
+		EnumInfos:         file_api_user_service_user_service_proto_enumTypes,
 		MessageInfos:      file_api_user_service_user_service_proto_msgTypes,
 	}.Build()
 	File_api_user_service_user_service_proto = out.File
