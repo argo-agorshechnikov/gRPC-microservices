@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
@@ -12,12 +13,43 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var ErrUserExists = errors.New("user already exists")
 
 type UserRepository struct {
 	Pool *pgxpool.Pool
+}
+
+func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*userpb.User, error) {
+
+	query := `
+		SELECT id, name, email, role, created_at, password_hash FROM users WHERE email=$1
+	`
+
+	// Call to db return string or error
+	row := r.Pool.QueryRow(ctx, query, email)
+
+	// var for collect request result
+	var user userpb.User
+	var roleStr string
+	var createdAt time.Time
+	var passwordHash string
+	err := row.Scan(&user.Id, &user.Name, &user.Email, &roleStr, &createdAt, &passwordHash)
+	if err != nil {
+		return nil, err
+	}
+
+	// roleStr to enum userpb.Role
+	user.Role = userpb.Role(userpb.Role_value[roleStr])
+
+	// time -> ptorobuf type (timestampb)
+	user.CreatedAt = timestamppb.New(createdAt)
+
+	user.PasswordHash = passwordHash
+
+	return &user, nil
 }
 
 func (r *UserRepository) CreateUser(ctx context.Context, user *userpb.User, passwordHash string) error {

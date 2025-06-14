@@ -17,6 +17,7 @@ message User {
     string email = 3;
     Role role = 4; // user / admin
     google.protobuf.Timestamp created_at = 5;
+    string passwordHash = 6;
 }
 
 message RegisterUserRequest {
@@ -29,13 +30,18 @@ message RegisterUserResponse {
     User user = 1;
 }
 
-message ListUsersRequest {}
-message ListUsersResponse {
-    repeated User users = 1;
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1; // JWT
 }
 
 service UserService {
     rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
-    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+    rpc Login (LoginRequest) returns (LoginResponse);
+    
 }
 

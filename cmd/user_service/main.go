@@ -8,6 +8,7 @@ import (
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/repository"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/service"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 
 	"google.golang.org/grpc"
@@ -35,7 +36,9 @@ func main() {
 		log.Fatalf("failed to listen (user): %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(auth.AuthInterceptor([]byte("secret_key"))),
+	)
 	userService := service.NewUserService(repo)
 
 	userpb.RegisterUserServiceServer(s, userService)
