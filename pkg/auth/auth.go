@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -28,8 +29,10 @@ func AuthInterceptor(jwtKey []byte) grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 
-		// For use register and login without token
-		if info.FullMethod == "/user.UserService/RegisterUser" || info.FullMethod == "/user.UserService/Login" {
+		// For use without token
+		if info.FullMethod == "/user.UserService/RegisterUser" ||
+			info.FullMethod == "/user.UserService/Login" ||
+			info.FullMethod == "/product.ProductService/ListProduct" {
 			return handler(ctx, req)
 		}
 
@@ -75,12 +78,21 @@ func AuthInterceptor(jwtKey []byte) grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, "role claim missing")
 		}
 
+		role = strings.ToLower(role)
+		log.Printf("role: %s", role)
+		if (info.FullMethod == "/product.ProductService/CreateProduct" ||
+			info.FullMethod == "/product.ProductService/UpdateProduct" ||
+			info.FullMethod == "/product.ProductService/DeleteProduct") && role != "admin" {
+			return nil, status.Error(codes.PermissionDenied, "only admin can create, update and delete product!")
+		}
+
 		// Get user id from claims
 		userID, _ := claims["user_id"].(string)
 
+		roleStr := strings.ToLower(role)
 		// Add user id and role under unique keys
 		newCtx := context.WithValue(ctx, UserIDKey, userID)
-		newCtx = context.WithValue(newCtx, RoleKey, role)
+		newCtx = context.WithValue(newCtx, RoleKey, roleStr)
 
 		return handler(newCtx, req)
 	}

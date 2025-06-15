@@ -55,17 +55,18 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*use
 func (r *UserRepository) CreateUser(ctx context.Context, user *userpb.User, passwordHash string) error {
 
 	query := `
-		INSERT INTO users (id, name, email, role, created_at, password_hash)
-		VALUES ($1, $2, $3, $4, NOW(), $5)
+		INSERT INTO users (name, email, role, created_at, password_hash)
+		VALUES ($1, $2, $3, NOW(), $4)
+		RETURNING id
 	`
 
-	_, err := r.Pool.Exec(ctx, query,
-		user.Id,
+	err := r.Pool.QueryRow(ctx, query,
 		user.Name,
 		user.Email,
 		user.Role.String(),
 		passwordHash,
-	)
+	).Scan(&user.Id)
+	log.Printf("postgres err: %v", err)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {

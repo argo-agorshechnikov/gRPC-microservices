@@ -7,8 +7,11 @@ import (
 
 	prodpb "github.com/argo-agorshechnikov/gRPC-microservices/api/product-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/product/repository"
+	"github.com/argo-agorshechnikov/gRPC-microservices/internal/product/service"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type server struct {
@@ -34,9 +37,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed listen: %v", err)
 	}
-	s := grpc.NewServer()
-	prodpb.RegisterProductServiceServer(s, &server{})
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(auth.AuthInterceptor([]byte("secret_key"))),
+	)
+	productService := service.NewProductService(repo)
+	prodpb.RegisterProductServiceServer(s, productService)
+	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed serve: %v", err)
+		log.Fatalf("failed serve (product): %v", err)
 	}
 }

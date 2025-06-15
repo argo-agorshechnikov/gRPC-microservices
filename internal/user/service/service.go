@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/repository"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -81,13 +81,13 @@ func (s *UserService) RegisterUser(ctx context.Context, req *userpb.RegisterUser
 
 	// Create user
 	user := &userpb.User{
-		Id:        uuid.NewString(),
 		Name:      req.Name,
 		Email:     req.Email,
 		Role:      userpb.Role_USER,
 		CreatedAt: timestamppb.New(time.Now()),
 	}
 
+	log.Println(user)
 	// Save in DB
 	err = s.repo.CreateUser(ctx, user, string(hashedPassword))
 	if err != nil {
@@ -95,6 +95,7 @@ func (s *UserService) RegisterUser(ctx context.Context, req *userpb.RegisterUser
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 
+		log.Printf("create user err: %v", err)
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 

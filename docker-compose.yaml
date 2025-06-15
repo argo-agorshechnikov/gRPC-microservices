@@ -101,12 +101,13 @@ services:
       - "8080:8080"
     command: [
       "-plaintext",
-      "user_service:50051"
+      "product_service:50052"
     ]
-
     depends_on:
-      user_service:
-        condition: service_healthy
+      - product_service
+      # user_service:
+      #   condition: service_healthy
+
 
 volumes:
   pgdata:

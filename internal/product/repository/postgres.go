@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	productpb "github.com/argo-agorshechnikov/gRPC-microservices/api/product-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -12,6 +13,55 @@ import (
 type ProductRepository struct {
 	Pool *pgxpool.Pool
 }
+
+func (p *ProductRepository) CreateProduct(ctx context.Context, req *productpb.Product) (*productpb.Product, error) {
+
+	var id int32
+	err := p.Pool.QueryRow(
+		ctx,
+		"INSERT INTO products (productname, description, price) VALUES ($1, $2, $3) RETURNING id",
+		req.ProductName, req.Description, req.Price).Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	product := &productpb.Product{
+		Id:          id,
+		ProductName: req.ProductName,
+		Description: req.Description,
+		Price:       req.Price,
+	}
+	return product, nil
+}
+
+func (p *ProductRepository) ListProduct(ctx context.Context) ([]*productpb.Product, error) {
+
+	rows, err := p.Pool.Query(ctx, "SELECT id, productname, description, price FROM products")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	products := make([]*productpb.Product, 0)
+	for rows.Next() {
+		var prod productpb.Product
+		err := rows.Scan(&prod.Id, &prod.ProductName, &prod.Description, &prod.Price)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, &prod)
+	}
+
+	return products, nil
+}
+
+// func (p *ProductRepository) UpdateProduct(ctx context.Context, p *productpb.Product) (*productpb.Product, error) {
+
+// }
+
+// func (p *ProductRepository) DeleteProduct(ctx context.Context, id int32) error {
+
+// }
 
 func CreateProductRepository(ctx context.Context, cfg *config.Config) (*ProductRepository, error) {
 
