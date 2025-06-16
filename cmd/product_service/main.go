@@ -14,10 +14,6 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-type server struct {
-	prodpb.UnimplementedProductServiceServer
-}
-
 func main() {
 
 	ctx := context.Background()

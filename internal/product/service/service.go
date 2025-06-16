@@ -38,7 +38,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *productpb.Creat
 	role, ok := ctx.Value(auth.RoleKey).(string)
 	log.Printf("role received: %s", role)
 	if !ok || role != "admin" {
-		return nil, status.Error(codes.PermissionDenied, "only admin can create products")
+		return nil, status.Error(codes.PermissionDenied, "(service) only admin can create products")
 	}
 
 	product := &productpb.Product{
@@ -53,4 +53,26 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *productpb.Creat
 	}
 
 	return createdProduct, nil
+}
+
+func (s *ProductService) UpdateProduct(ctx context.Context, req *productpb.UpdateProductRequest) (*productpb.Product, error) {
+
+	role, ok := ctx.Value(auth.RoleKey).(string)
+	if !ok || role != "admin" {
+		return nil, status.Error(codes.PermissionDenied, "(service) only admin can update product!")
+	}
+
+	product := &productpb.Product{
+		Id:          req.Id,
+		ProductName: req.ProductName,
+		Description: req.Description,
+		Price:       req.Price,
+	}
+
+	updatedProduct, err := s.repo.UpdateProduct(ctx, product)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "(service) failed to update product")
+	}
+
+	return updatedProduct, nil
 }
