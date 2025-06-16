@@ -172,7 +172,6 @@ func (x *ListProductResponse) GetProducts() []*Product {
 
 type CreateProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ProductName   string                 `protobuf:"bytes,2,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Price         float64                `protobuf:"fixed64,4,opt,name=price,proto3" json:"price,omitempty"`
@@ -208,13 +207,6 @@ func (x *CreateProductRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateProductRequest.ProtoReflect.Descriptor instead.
 func (*CreateProductRequest) Descriptor() ([]byte, []int) {
 	return file_api_product_service_product_service_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *CreateProductRequest) GetId() int32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
 }
 
 func (x *CreateProductRequest) GetProductName() string {
@@ -362,9 +354,8 @@ const file_api_product_service_product_service_proto_rawDesc = "" +
 	"\x05price\x18\x04 \x01(\x01R\x05price\"\x14\n" +
 	"\x12ListProductRequest\"C\n" +
 	"\x13ListProductResponse\x12,\n" +
-	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\"\x81\x01\n" +
-	"\x14CreateProductRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12!\n" +
+	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\"q\n" +
+	"\x14CreateProductRequest\x12!\n" +
 	"\fproduct_name\x18\x02 \x01(\tR\vproductName\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x01R\x05price\"\x81\x01\n" +

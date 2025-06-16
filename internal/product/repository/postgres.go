@@ -57,6 +57,15 @@ func (p *ProductRepository) ListProduct(ctx context.Context) ([]*productpb.Produ
 
 // func (p *ProductRepository) UpdateProduct(ctx context.Context, p *productpb.Product) (*productpb.Product, error) {
 
+// 	query := `
+// 		INSERT INTO products (productname, description, price)
+// 		VALUES ($1, $2, $3)
+// 	`
+
+// 	err := p.Pool.QueryRow(ctx, query,
+
+// 	)
+
 // }
 
 // func (p *ProductRepository) DeleteProduct(ctx context.Context, id int32) error {

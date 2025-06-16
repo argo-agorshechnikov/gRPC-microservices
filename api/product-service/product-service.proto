@@ -21,7 +21,6 @@ message ListProductResponse {
 }
 
 message CreateProductRequest {
-    int32 id = 1;
     string product_name = 2;
     string description = 3;
     double price = 4;
