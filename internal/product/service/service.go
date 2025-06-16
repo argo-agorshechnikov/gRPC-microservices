@@ -9,6 +9,7 @@ import (
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ProductService struct {
@@ -75,4 +76,19 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *productpb.Updat
 	}
 
 	return updatedProduct, nil
+}
+
+func (s *ProductService) DeleteProduct(ctx context.Context, req *productpb.DeleteProductRequest) (*emptypb.Empty, error) {
+
+	role, ok := ctx.Value(auth.RoleKey).(string)
+	if !ok || role != "admin" {
+		return nil, status.Error(codes.PermissionDenied, "(service) only admin can delete product!")
+	}
+
+	err := s.repo.DeleteProduct(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "(service) failed to delete product")
+	}
+
+	return &emptypb.Empty{}, nil
 }

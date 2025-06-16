@@ -42,7 +42,7 @@ func (p *ProductRepository) UpdateProduct(ctx context.Context, req *productpb.Pr
 		WHERE id = $4
 	`
 
-	commTag, err := p.Pool.Exec(ctx, query,
+	commandTag, err := p.Pool.Exec(ctx, query,
 		req.ProductName,
 		req.Description,
 		req.Price,
@@ -52,12 +52,29 @@ func (p *ProductRepository) UpdateProduct(ctx context.Context, req *productpb.Pr
 		return nil, fmt.Errorf("failed to execute update query: %w", err)
 	}
 
-	if commTag.RowsAffected() == 0 {
+	if commandTag.RowsAffected() == 0 {
 		return nil, fmt.Errorf("no product found with id: %d", req.Id)
 	}
 
 	return req, nil
 
+}
+
+func (p *ProductRepository) DeleteProduct(ctx context.Context, id int32) error {
+
+	query := `
+		DELETE FROM products WHERE id = $1
+	`
+	commandTag, err := p.Pool.Exec(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to execute delete query: %w", err)
+	}
+
+	if commandTag.RowsAffected() == 0 {
+		return fmt.Errorf("product not found with id: %d", id)
+	}
+
+	return nil
 }
 
 func (p *ProductRepository) ListProduct(ctx context.Context) ([]*productpb.Product, error) {
@@ -80,10 +97,6 @@ func (p *ProductRepository) ListProduct(ctx context.Context) ([]*productpb.Produ
 
 	return products, nil
 }
-
-// func (p *ProductRepository) DeleteProduct(ctx context.Context, id int32) error {
-
-// }
 
 func CreateProductRepository(ctx context.Context, cfg *config.Config) (*ProductRepository, error) {
 
