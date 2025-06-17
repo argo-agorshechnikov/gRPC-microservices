@@ -66,7 +66,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *userpb.User, pass
 		user.Role.String(),
 		passwordHash,
 	).Scan(&user.Id)
-	log.Printf("postgres err: %v", err)
+
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {

@@ -9,13 +9,25 @@ message CartItem {
     int32 quantity = 2;
 }
 
-message AddCartRequest {
-    int32 user_id = 1;
-    CartItem item = 2;
+message AddItemRequest {
+    int32 product_id = 1;
+    int32 user_id = 2;
+    
 }
 
-message AddCartResponse {
+message AddItemResponse {
     bool success = 1;
+    string message = 2;
+}
+
+message RemoveItemRequest {
+    int32 user_id = 1;
+    int32 product_id = 2;
+}
+
+message RemoveItemResponse {
+    bool success = 1;
+    string message = 2;
 }
 
 message GetCartRequest {
@@ -27,6 +39,7 @@ message GetCartResponse {
 }
 
 service CartService {
-    rpc AddCart(AddCartRequest) returns (AddCartResponse);
+    rpc AddItem(AddItemRequest) returns (AddItemResponse);
+    rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse);
     rpc GetCart(GetCartRequest) returns (GetCartResponse);
 }

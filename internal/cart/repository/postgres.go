@@ -13,6 +13,21 @@ type CartRepository struct {
 	Pool *pgxpool.Pool
 }
 
+func (r *CartRepository) AddItem(ctx context.Context, user_id, product_id int) error {
+
+	return nil
+}
+
+func (r *CartRepository) RemoveItem(ctx context.Context) error {
+
+	return nil
+}
+
+func (r *CartRepository) GetCart(ctx context.Context, user_id int32) error {
+
+	return nil
+}
+
 func CreateCartRepository(ctx context.Context, cfg *config.Config) (*CartRepository, error) {
 
 	dsn := fmt.Sprintf(
