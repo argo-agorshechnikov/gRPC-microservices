@@ -75,8 +75,8 @@ func (x *CartItem) GetQuantity() int32 {
 
 type AddItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int32                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ProductId     int32                  `protobuf:"varint,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,16 +111,16 @@ func (*AddItemRequest) Descriptor() ([]byte, []int) {
 	return file_api_cart_service_cart_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AddItemRequest) GetProductId() int32 {
+func (x *AddItemRequest) GetUserId() int32 {
 	if x != nil {
-		return x.ProductId
+		return x.UserId
 	}
 	return 0
 }
 
-func (x *AddItemRequest) GetUserId() int32 {
+func (x *AddItemRequest) GetProductId() int32 {
 	if x != nil {
-		return x.UserId
+		return x.ProductId
 	}
 	return 0
 }
@@ -378,10 +378,10 @@ const file_api_cart_service_cart_service_proto_rawDesc = "" +
 	"\n" +
 	"product_id\x18\x01 \x01(\x05R\tproductId\x12\x1a\n" +
 	"\bquantity\x18\x02 \x01(\x05R\bquantity\"H\n" +
-	"\x0eAddItemRequest\x12\x1d\n" +
+	"\x0eAddItemRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\x05R\tproductId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\"E\n" +
+	"product_id\x18\x02 \x01(\x05R\tproductId\"E\n" +
 	"\x0fAddItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"K\n" +
