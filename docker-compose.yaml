@@ -20,6 +20,7 @@ services:
     ports:
       - "50051:50051"
     environment:
+      - KAFKA_BROKER_ADDRESS=kafka:9092
       - APP_DATABASE_HOST=db
       - APP_DATABASE_PORT=5432
       - APP_DATABASE_USER=argo
@@ -101,13 +102,13 @@ services:
       - "8080:8080"
     command: [
       "-plaintext",
-      "cart_service:50053"
+      "user_service:50051"
     ]
     depends_on:
-      - cart_service
+      # - cart_service
       # - product_service
-      # user_service:
-      #   condition: service_healthy
+      user_service:
+        condition: service_healthy
 
   zookeeper:
     image: wurstmeister/zookeeper:latest
@@ -126,7 +127,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

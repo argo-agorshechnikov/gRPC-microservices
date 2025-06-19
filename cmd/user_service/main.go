@@ -10,6 +10,7 @@ import (
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/kafka"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -39,7 +40,11 @@ func main() {
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(auth.AuthInterceptor([]byte("secret_key"))),
 	)
-	userService := service.NewUserService(repo)
+
+	userProducer := kafka.NewProducer("user-events")
+	defer userProducer.Close()
+
+	userService := service.NewUserService(repo, userProducer)
 
 	userpb.RegisterUserServiceServer(s, userService)
 	reflection.Register(s)

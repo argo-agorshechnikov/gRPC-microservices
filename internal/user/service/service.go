@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
 	userpb "github.com/argo-agorshechnikov/gRPC-microservices/api/user-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/user/repository"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/kafka"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -17,13 +20,24 @@ import (
 
 var jwtKey = []byte("secret_key")
 
-type UserService struct {
-	userpb.UnimplementedUserServiceServer
-	repo *repository.UserRepository
+type UserRegisteredEvent struct {
+	ID    int32  `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
-func NewUserService(repo *repository.UserRepository) *UserService {
-	return &UserService{repo: repo}
+type UserService struct {
+	userpb.UnimplementedUserServiceServer
+	repo     *repository.UserRepository
+	producer *kafka.Producer
+}
+
+func NewUserService(repo *repository.UserRepository, producer *kafka.Producer) *UserService {
+	return &UserService{
+		repo:     repo,
+		producer: producer,
+	}
 }
 
 func (s *UserService) Login(ctx context.Context, req *userpb.LoginRequest) (*userpb.LoginResponse, error) {
@@ -97,6 +111,24 @@ func (s *UserService) RegisterUser(ctx context.Context, req *userpb.RegisterUser
 
 		log.Printf("create user err: %v", err)
 		return nil, status.Error(codes.Internal, "failed to create user")
+	}
+
+	event := UserRegisteredEvent{
+		ID:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
+		Role:  user.Role.String(),
+	}
+
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Printf("failed to marshal user registered event: %v", err)
+	} else {
+		err = s.producer.SendMessage([]byte(fmt.Sprintf("%d", user.Id)), eventBytes)
+
+		if err != nil {
+			log.Printf("failed to send user registered event to kafka: %v", err)
+		}
 	}
 
 	return &userpb.RegisterUserResponse{User: user}, nil
