@@ -77,6 +77,7 @@ type AddItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ProductId     int32                  `protobuf:"varint,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Quantity      int32                  `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -121,6 +122,13 @@ func (x *AddItemRequest) GetUserId() int32 {
 func (x *AddItemRequest) GetProductId() int32 {
 	if x != nil {
 		return x.ProductId
+	}
+	return 0
+}
+
+func (x *AddItemRequest) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
 	}
 	return 0
 }
@@ -377,11 +385,12 @@ const file_api_cart_service_cart_service_proto_rawDesc = "" +
 	"\bCartItem\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\x05R\tproductId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x05R\bquantity\"H\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"d\n" +
 	"\x0eAddItemRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x02 \x01(\x05R\tproductId\"E\n" +
+	"product_id\x18\x02 \x01(\x05R\tproductId\x12\x1a\n" +
+	"\bquantity\x18\x03 \x01(\x05R\bquantity\"E\n" +
 	"\x0fAddItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"K\n" +

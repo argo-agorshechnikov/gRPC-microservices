@@ -101,10 +101,11 @@ services:
       - "8080:8080"
     command: [
       "-plaintext",
-      "product_service:50052"
+      "cart_service:50053"
     ]
     depends_on:
-      - product_service
+      - cart_service
+      # - product_service
       # user_service:
       #   condition: service_healthy
 

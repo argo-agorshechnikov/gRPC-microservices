@@ -32,7 +32,10 @@ func AuthInterceptor(jwtKey []byte) grpc.UnaryServerInterceptor {
 		// For use without token
 		if info.FullMethod == "/user.UserService/RegisterUser" ||
 			info.FullMethod == "/user.UserService/Login" ||
-			info.FullMethod == "/product.ProductService/ListProduct" {
+			info.FullMethod == "/product.ProductService/ListProduct" ||
+			info.FullMethod == "/cart.CartService/GetCart" ||
+			info.FullMethod == "/cart.CartService/AddItem" ||
+			info.FullMethod == "/cart.CartService/RemoveItem" {
 			return handler(ctx, req)
 		}
 

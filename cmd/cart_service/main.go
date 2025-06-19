@@ -7,13 +7,12 @@ import (
 
 	cartpb "github.com/argo-agorshechnikov/gRPC-microservices/api/cart-service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/cart/repository"
+	"github.com/argo-agorshechnikov/gRPC-microservices/internal/cart/service"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
-
-type server struct {
-	cartpb.UnimplementedCartServiceServer
-}
 
 func main() {
 
@@ -35,8 +34,13 @@ func main() {
 		log.Fatalf("failed listen: %v", err)
 	}
 
-	s := grpc.NewServer()
-	cartpb.RegisterCartServiceServer(s, &server{})
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(auth.AuthInterceptor([]byte("secret_key"))),
+	)
+	cartService := service.NewCartService(repo)
+
+	cartpb.RegisterCartServiceServer(s, cartService)
+	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failder serve: %v", err)
 	}
