@@ -85,6 +85,22 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *productpb.Creat
 		return nil, status.Error(codes.Internal, "failed to create product")
 	}
 
+	event := ProductListEvent{
+		ProductName: createdProduct.ProductName,
+		Description: createdProduct.Description,
+		Price:       createdProduct.Price,
+	}
+
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Printf("failed marshal product create event: %v", err)
+	} else {
+		err = s.producer.SendMessage([]byte(event.ProductName), eventBytes)
+		if err != nil {
+			log.Printf("failed send message product create event to kafka:%v", err)
+		}
+	}
+
 	return createdProduct, nil
 }
 
