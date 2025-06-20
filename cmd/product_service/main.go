@@ -10,6 +10,7 @@ import (
 	"github.com/argo-agorshechnikov/gRPC-microservices/internal/product/service"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/auth"
 	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/config"
+	"github.com/argo-agorshechnikov/gRPC-microservices/pkg/kafka"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -36,7 +37,10 @@ func main() {
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(auth.AuthInterceptor([]byte("secret_key"))),
 	)
-	productService := service.NewProductService(repo)
+
+	productProducer := kafka.NewProducer("product-events")
+
+	productService := service.NewProductService(repo, productProducer)
 	prodpb.RegisterProductServiceServer(s, productService)
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {

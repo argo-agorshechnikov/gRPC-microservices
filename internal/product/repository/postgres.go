@@ -18,7 +18,7 @@ func (p *ProductRepository) CreateProduct(ctx context.Context, req *productpb.Pr
 
 	var id int32
 	query := `
-		"INSERT INTO products (productname, description, price) VALUES ($1, $2, $3) RETURNING id"
+		INSERT INTO products (productname, description, price) VALUES ($1, $2, $3) RETURNING id
 	`
 	err := p.Pool.QueryRow(
 		ctx,
@@ -83,7 +83,7 @@ func (p *ProductRepository) DeleteProduct(ctx context.Context, id int32) error {
 func (p *ProductRepository) ListProduct(ctx context.Context) ([]*productpb.Product, error) {
 
 	query := `
-		"SELECT id, productname, description, price FROM products"
+		SELECT id, productname, description, price FROM products
 	`
 	rows, err := p.Pool.Query(ctx, query)
 	if err != nil {
