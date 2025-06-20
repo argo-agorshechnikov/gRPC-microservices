@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	productpb "github.com/argo-agorshechnikov/gRPC-microservices/api/product-service"
@@ -121,6 +122,23 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *productpb.Updat
 	updatedProduct, err := s.repo.UpdateProduct(ctx, product)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "(service) failed to update product")
+	}
+
+	event := ProductListEvent{
+		Id:          updatedProduct.Id,
+		ProductName: updatedProduct.ProductName,
+		Description: updatedProduct.Description,
+		Price:       updatedProduct.Price,
+	}
+
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Printf("failed marshal product update event: %v", err)
+	} else {
+		err = s.producer.SendMessage([]byte(fmt.Sprintf("%d", event.Id)), eventBytes)
+		if err != nil {
+			log.Printf("failed to send message product update event to kafka: %v", err)
+		}
 	}
 
 	return updatedProduct, nil

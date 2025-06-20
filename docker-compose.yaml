@@ -102,11 +102,11 @@ services:
       - "8080:8080"
     command: [
       "-plaintext",
-      "product_service:50052"
+      "cart_service:50053"
     ]
     depends_on:
-      # - cart_service
-      - product_service
+      - cart_service
+      # - product_service
       # user_service:
       #   condition: service_healthy
 
@@ -142,6 +142,15 @@ services:
         condition: service_healthy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
 
 volumes:
   pgdata:
+  redisdata:

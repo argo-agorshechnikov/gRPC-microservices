@@ -26,7 +26,7 @@ func (r *CartRepository) GetCart(ctx context.Context, user_id int32) ([]*cartpb.
 	}
 	defer rows.Close()
 
-	var items []*cartpb.CartItem
+	items := make([]*cartpb.CartItem, 0)
 
 	for rows.Next() {
 		var product_id int32
