@@ -27,6 +27,11 @@ type UserRegisteredEvent struct {
 	Role  string `json:"role"`
 }
 
+type UserLoginEvent struct {
+	Email string `json:"email"`
+	Token string `json:"token"`
+}
+
 type UserService struct {
 	userpb.UnimplementedUserServiceServer
 	repo     *repository.UserRepository
@@ -73,6 +78,22 @@ func (s *UserService) Login(ctx context.Context, req *userpb.LoginRequest) (*use
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failde to generate token")
+	}
+
+	events := UserLoginEvent{
+		Email: req.Email,
+		Token: tokenString,
+	}
+
+	eventsBytes, err := json.Marshal(events)
+	if err != nil {
+		log.Printf("failed marshal user login events: %v", err)
+	} else {
+		err = s.producer.SendMessage([]byte(fmt.Sprintf("%s", req.Email)), eventsBytes)
+
+		if err != nil {
+			log.Printf("failed to send message user login event to kafka: %v", err)
+		}
 	}
 
 	return &userpb.LoginResponse{
